@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        select {
+            margin-bottom: 10px;
+            padding: 5px;
+            font-size: 16px;
+        }
+
+        .output {
+            font-size: 24px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Font Converter</h1>
+    <textarea id="inputText" placeholder="Enter your text here..."></textarea><br>
+
+    <select id="fontStyle">
+        <option value="block">Blocky Squares</option>
+        <option value="cursive">Cursive</option>
+        <option value="bold">Bold</option>
+        <option value="tiny">Tiny</option>
+        <!-- Add more options as needed -->
+    </select><br>
+
+    <button id="convertBtn">Convert</button>
+    <button id="copyBtn" disabled>Copy to Clipboard</button>
+    <div class="output" id="outputText"></div>
+</div>
+
+<script>
+    const inputText = document.getElementById('inputText');
+    const outputText = document.getElementById('outputText');
+    const convertBtn = document.getElementById('convertBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const fontStyle = document.getElementById('fontStyle');
+
+    // Define different font styles
+    const fonts = {
+        'block': {
+            'A': '????', 'B': '????', 'C': '????', 'D': '????', 'E': '????', 'F': '????',
+            'G': '????', 'H': '????', 'I': '????', 'J': '????', 'K': '????', 'L': '????',
+            'M': '????', 'N': '????', 'O': '????', 'P': '????', 'Q': '????', 'R': '????',
+            'S': '????', 'T': '????', 'U': '????', 'V': '????', 'W': '????', 'X': '????',
+            'Y': '????', 'Z': '????',
+            'a': '????', 'b': '????', 'c': '????', 'd': '????', 'e': '????', 'f': '????',
+            'g': '????', 'h': '????', 'i': '????', 'j': '????', 'k': '????', 'l': '????',
+            'm': '????', 'n': '????', 'o': '????', 'p': '????', 'q': '????', 'r': '????',
+            's': '????', 't': '????', 'u': '????', 'v': '????', 'w': '????', 'x': '????',
+            'y': '????', 'z': '????', ' ': ' '
+        },
+        'cursive': {
+            'A': '????', 'B': '????', 'C': '????', 'D': '????', 'E': '????', 'F': '????',
+            'G': '????', 'H': '????', 'I': '????', 'J': '????', 'K': '????', 'L': '????',
+            'M': '????', 'N': '????', 'O': '????', 'P': '????', 'Q': '????', 'R': '????',
+            'S': '????', 'T': '????', 'U': '????', 'V': '????', 'W': '????', 'X': '????',
+            'Y': '????', 'Z': '????',
+            'a': '????', 'b': '????', 'c': '????', 'd': '????', 'e': '????', 'f': '????',
+            'g': '????', 'h': '????', 'i': '????', 'j': '????', 'k': '????', 'l': '????',
+            'm': '????', 'n': '????', 'o': '????', 'p': '????', 'q': '????', 'r': '????',
+            's': '????', 't': '????', 'u': '????', 'v': '????', 'w': '????', 'x': '????',
+            'y': '????', 'z': '????', ' ': ' '
+        },
+        'bold': {
+            'A': '????', 'B': '????', 'C': '????', 'D': '????', 'E': '????', 'F': '????',
+            'G': '????', 'H': '????', 'I': '????', 'J': '????', 'K': '????', 'L': '????',
+            'M': '????', 'N': '????', 'O': '????', 'P': '????', 'Q': '????', 'R': '????',
+            'S': '????', 'T': '????', 'U': '????', 'V': '????', 'W': '????', 'X': '????',
+            'Y': '????', 'Z': '????',
+            'a': '????', 'b': '????', 'c': '????', 'd': '????', 'e': '????', 'f': '????',
+            'g': '????', 'h': '????', 'i': '????', 'j': '????', 'k': '????', 'l': '????',
+            'm': '????', 'n': '????', 'o': '????', 'p': '????', 'q': '????', 'r': '????',
+            's': '????', 't': '????', 'u': '????', 'v': '????', 'w': '????', 'x': '????',
+            'y': '????', 'z': '????', ' ': ' '
+        },
+        'tiny': {
+            'A': 'ᵃ', 'B': 'ᵇ', 'C': 'ᶜ', 'D': 'ᵈ', 'E': 'ᵉ', 'F': 'ᶠ',
+            'G': 'ᵍ', 'H': 'ʰ', 'I': 'ⁱ', 'J': 'ʲ', 'K': 'ᶦ', 'L': 'ˡ',
+            'M': 'ᵐ', 'N': 'ⁿ', 'O': 'ᵒ', 'P': 'ᵖ', 'Q': 'q', 'R': 'ʳ',
+            'S': 'ˢ', 'T': 'ᵗ', 'U': 'ᵘ', 'V': 'ᵛ', 'W': 'ʷ', 'X': 'ˣ',
+            'Y': 'ʸ', 'Z': 'ᶻ',
+            'a': 'ᵃ', 'b': 'ᵇ', 'c': 'ᶜ', 'd': 'ᵈ', 'e': 'ᵉ', 'f': 'ᶠ',
+            'g': 'ᵍ', 'h': 'ʰ', 'i': 'ⁱ', 'j': 'ʲ', 'k': 'ᶦ', 'l': 'ˡ',
+            'm': 'ᵐ', 'n': 'ⁿ', 'o': 'ᵒ', 'p': 'ᵖ', 'q': 'q', 'r': 'ʳ',
+            's': 'ˢ', 't': 'ᵗ', 'u': 'ᵘ', 'v': 'ᵛ', 'w': 'ʷ', 'x': 'ˣ',
+            'y': 'ʸ', 'z': 'ᶻ', ' ': ' '
+        }
+    };
+
+    convertBtn.addEventListener('click', () => {
+        const selectedFont = fontStyle.value;
+        let convertedText = '';
+
+        for (let char of inputText.value) {
+            convertedText += fonts[selectedFont][char] || char;
+        }
+
+        outputText.textContent = convertedText;
+        copyBtn.disabled = false;
+    });
+
+    copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(outputText.textContent)
+            .then(() => {
+                alert('Text copied to clipboard!');
+            })
+            .catch(err => {
+                console.error('Error copying text: ', err);
+            });
+    });
+</script>
+
+</body>
+</html>
