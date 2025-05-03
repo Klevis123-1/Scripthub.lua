@@ -323,23 +323,4 @@ local function explodeLoop(character)
 end
 
 -- Setup explosion for a player
-local function setupPlayer(player)
-	player.CharacterAdded:Connect(function(character)
-		task.delay(1, function()
-			explodeLoop(character)
-		end)
-	end)
-
-	if player.Character then
-		explodeLoop(player.Character)
-	end
-end
-
--- Apply to all players
-for _, player in ipairs(Players:GetPlayers()) do
-	setupPlayer(player)
-end
-
-Players.PlayerAdded:Connect(setupPlayer)
-   end,
-})
+local function 
